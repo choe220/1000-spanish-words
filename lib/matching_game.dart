@@ -42,19 +42,7 @@ class _MatchingGameState extends State<MatchingGame> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ...english.map(
-              (e) => Card(
-                color: e == englishSelected ? Colors.green : Colors.white,
-                child: InkWell(
-                  onTap: () {
-                    englishSelected = e;
-                    var correct = checkCorrect();
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(25.0),
-                    child: Text(e.english),
-                  ),
-                ),
-              ),
+              (e) => 
             ),
           ],
         ),
