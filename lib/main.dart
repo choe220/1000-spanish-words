@@ -1,8 +1,10 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:spanish_words/flashcards_view.dart';
+import 'package:spanish_words/matching_game.dart';
 import 'package:spanish_words/models/words.dart';
 
 void main() {
@@ -65,6 +67,9 @@ class _MyHomePageState extends State<MyHomePage> {
             }
             List<Word> words = snapshot.data!;
 
+            // return MatchingGame(
+            //     words: List.generate(
+            //         5, (_) => words[Random().nextInt(words.length)]));
             return FlashcardsView(words: words);
           },
         ),
