@@ -13,25 +13,42 @@ class MatchingGame extends StatefulWidget {
 }
 
 class _MatchingGameState extends State<MatchingGame> {
+  late List<Word> english;
+  late List<Word> spanish;
+
   Word? englishSelected;
   Word? spanishSelected;
 
   @override
+  void initState() {
+    super.initState();
+    english = widget.words.shuffle();
+    spanish = widget.words.shuffle();
+  }
+
+  bool checkCorrect() {
+    if (englishSelected == spanishSelected) {
+      return true;
+    }
+    return false;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    print(englishSelected?.english);
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ...widget.words.map(
+            ...english.map(
               (e) => Card(
                 color: e == englishSelected ? Colors.green : Colors.white,
                 child: InkWell(
-                  onTap: () => setState(() {
+                  onTap: () {
                     englishSelected = e;
-                  }),
+                    var correct = checkCorrect();
+                  },
                   child: Padding(
                     padding: const EdgeInsets.all(25.0),
                     child: Text(e.english),
@@ -47,13 +64,14 @@ class _MatchingGameState extends State<MatchingGame> {
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ...widget.words.map(
+            ...spanish.map(
               (e) => Card(
                 color: e == spanishSelected ? Colors.green : Colors.white,
                 child: InkWell(
-                  onTap: () => setState(() {
+                  onTap: () {
                     spanishSelected = e;
-                  }),
+                    var correct = checkCorrect();
+                  },
                   child: Padding(
                     padding: const EdgeInsets.all(25.0),
                     child: Text(e.spanish),
