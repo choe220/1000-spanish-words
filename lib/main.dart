@@ -1,20 +1,32 @@
 import 'dart:io';
-import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:spanish_words/flashcards_view.dart';
-import 'package:spanish_words/matching_game.dart';
+import 'package:provider/provider.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:spanish_words/views/matching_game.dart';
+import 'package:spanish_words/models/user.dart';
+import 'firebase_options.dart';
 import 'package:spanish_words/models/words.dart';
+import 'package:spanish_words/views/menu.dart';
 
-void main() {
-  if (Platform.isAndroid) {
-    SystemChrome.setPreferredOrientations(
-      [
-        DeviceOrientation.portraitUp,
-      ],
-    );
+void main() async {
+  if (!kIsWeb) {
+    if (Platform.isAndroid) {
+      SystemChrome.setPreferredOrientations(
+        [
+          DeviceOrientation.portraitUp,
+        ],
+      );
+    }
   }
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(const MyApp());
 }
 
@@ -43,12 +55,25 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  late Map<String, String> words;
-  late List<Word> listToShow;
+  Future<User?> getUser() async {
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    var user = await db.collection('users').doc('matt').get();
 
-  Future<List<Word>> readJson() async {
-    final String response = await rootBundle.loadString('assets/words.json');
-    return wordsFromJson(response);
+    if (user.data() != null) {
+      return User.fromFirebase(user.data()!);
+    } else {
+      User user = await createUser();
+      user.generateSet().then((value) async => await user.saveToFirebase());
+      return user;
+    }
+  }
+
+  Future<User> createUser() async {
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    var snapshot = await db.collection('words').get();
+    List<Word> words =
+        List<Word>.from(snapshot.docs.map((e) => Word.fromJson(e.data())));
+    return User(words: words);
   }
 
   @override
@@ -57,20 +82,23 @@ class _MyHomePageState extends State<MyHomePage> {
       backgroundColor: const Color.fromARGB(255, 46, 46, 46),
       body: Center(
         child: FutureBuilder(
-          future: readJson(),
-          builder: (BuildContext context, AsyncSnapshot<List<Word>> snapshot) {
+          future: getUser(),
+          builder: (context, AsyncSnapshot<User?> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const CircularProgressIndicator();
             }
-            if (snapshot.hasError) {
-              return Text(snapshot.error.toString());
-            }
-            List<Word> words = snapshot.data!;
 
-            // return MatchingGame(
-            //     words: List.generate(
-            //         5, (_) => words[Random().nextInt(words.length)]));
-            return FlashcardsView(words: words);
+            if (snapshot.hasError) {
+              return Text(
+                snapshot.error.toString(),
+                style: const TextStyle(color: Colors.white),
+              );
+            }
+
+            return ChangeNotifierProvider.value(
+              value: snapshot.data,
+              child: const Menu(),
+            );
           },
         ),
       ),

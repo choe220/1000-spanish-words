@@ -1,35 +1,67 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
+import 'package:flutter_tts/flutter_tts_web.dart';
 import 'package:spanish_words/models/words.dart';
 
 class MatchCard extends StatefulWidget {
-    const MatchCard(this.word, {Key? key, this.english, this.checkCallback}) : super(key: key);
+  const MatchCard(this.word,
+      {Key? key,
+      required this.english,
+      this.correct,
+      required this.selected,
+      required this.mute,
+      required this.onTapCallback})
+      : super(key: key);
 
-    final Word word;
-    final bool english;
-    final Function checkCallback;
+  final Word word;
+  final bool english;
+  final bool selected;
+  final bool? correct;
+  final bool mute;
+  final Function onTapCallback;
 
-    @override
-    State<MatchCard> createState() => _MatchCardState();
+  @override
+  State<MatchCard> createState() => _MatchCardState();
 }
 
 class _MatchCardState extends State<MatchCard> {
-    bool correct = false;
-    bool selected = false;
+  FlutterTts flutterTts = FlutterTts();
+  TtsState ttsState = TtsState.stopped;
 
-    @override
-    Widget build(BuildContext context) {
-        return Card(
-            color: widget.word == englishSelected ? Colors.green : Colors.white,
-            child: InkWell(
-                onTap: () {
-                    widget.checkCallback(widget.word);
-                    var correct = checkCorrect();
-                },
-                child: Padding(
-                padding: const EdgeInsets.all(25.0),
-                child: Text(widget.english ? widget.word.english : widget.word.spanish),
-                ),
+  Future _speak(String string) async {
+    await flutterTts.setLanguage("es-MX");
+
+    await flutterTts.awaitSpeakCompletion(true);
+    var result = await flutterTts.speak(string);
+    if (result == 1) setState(() => ttsState = TtsState.playing);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width * 0.4,
+      child: Card(
+        color: widget.selected
+            ? const Color.fromARGB(255, 211, 211, 211)
+            : widget.correct != null && widget.correct!
+                ? Colors.green
+                : Colors.white,
+        child: InkWell(
+          onTap: () async {
+            widget.onTapCallback(widget.word, widget.english);
+            if (!widget.english && !widget.mute) {
+              await _speak(widget.word.spanish);
+            }
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(25.0),
+            child: Text(
+              widget.english ? widget.word.english : widget.word.spanish,
+              textAlign: TextAlign.center,
             ),
-        );
-    }
+          ),
+        ),
+      ),
+    );
+  }
 }

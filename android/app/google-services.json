@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "876927643079",
+    "project_id": "spanish-words-1645a",
+    "storage_bucket": "spanish-words-1645a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:876927643079:android:1b4aeaf6bf70acf2b43de2",
+        "android_client_info": {
+          "package_name": "com.example.spanish_words"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "876927643079-95d2r2ltk6bjq8f1mq8sd6mkmav8p9dr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDBAvYmx1Ro-RE-UVNclNy7KvfSH3xa5u0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "876927643079-95d2r2ltk6bjq8f1mq8sd6mkmav8p9dr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
