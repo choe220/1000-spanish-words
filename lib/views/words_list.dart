@@ -52,20 +52,36 @@ class _WordsListState extends State<WordsList> {
             const SizedBox(
               height: 20,
             ),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: TextField(
-                  onChanged: (value) => _filter(value),
-                  decoration: const InputDecoration(
-                    labelText: 'Search',
-                    suffixIcon: Icon(Icons.search),
+            Row(
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: TextField(
+                      onChanged: (value) => _filter(value),
+                      cursorColor: Colors.white,
+                      style: const TextStyle(color: Colors.white),
+                      decoration: const InputDecoration(
+                        labelText: 'Search',
+                        labelStyle: TextStyle(color: Colors.white),
+                        suffixIcon: Icon(
+                          Icons.search,
+                          color: Colors.white,
+                        ),
+                        border: InputBorder.none,
+                        iconColor: Colors.white,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-            const SizedBox(
-              height: 20,
+                IconButton(
+                  icon: const Icon(
+                    Icons.filter_alt_outlined,
+                    color: Colors.white,
+                  ),
+                  onPressed: () {},
+                )
+              ],
             ),
             Expanded(
               child: _foundWords.isNotEmpty
@@ -75,7 +91,6 @@ class _WordsListState extends State<WordsList> {
                         key: ValueKey(_foundWords[index].english),
                         color: Colors.white,
                         elevation: 4,
-                        margin: const EdgeInsets.symmetric(vertical: 10),
                         child: ListTile(
                           title: Text(_foundWords[index].english),
                           subtitle: Text(_foundWords[index].spanish),
