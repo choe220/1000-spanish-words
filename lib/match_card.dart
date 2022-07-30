@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:flutter_tts/flutter_tts_web.dart';
 import 'package:spanish_words/models/words.dart';
 
 class MatchCard extends StatefulWidget {
@@ -26,14 +25,11 @@ class MatchCard extends StatefulWidget {
 
 class _MatchCardState extends State<MatchCard> {
   FlutterTts flutterTts = FlutterTts();
-  TtsState ttsState = TtsState.stopped;
 
   Future _speak(String string) async {
     await flutterTts.setLanguage("es-MX");
-
     await flutterTts.awaitSpeakCompletion(true);
-    var result = await flutterTts.speak(string);
-    if (result == 1) setState(() => ttsState = TtsState.playing);
+    await flutterTts.speak(string);
   }
 
   @override
@@ -48,9 +44,11 @@ class _MatchCardState extends State<MatchCard> {
                 : Colors.white,
         child: InkWell(
           onTap: () async {
-            widget.onTapCallback(widget.word, widget.english);
-            if (!widget.english && !widget.mute) {
-              await _speak(widget.word.spanish);
+            if (widget.correct != null && !widget.correct!) {
+              widget.onTapCallback(widget.word, widget.english);
+              if (!widget.english && !widget.mute) {
+                await _speak(widget.word.spanish);
+              }
             }
           },
           child: Padding(

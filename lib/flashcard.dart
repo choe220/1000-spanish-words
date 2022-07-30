@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:flutter_tts/flutter_tts_web.dart';
 import 'package:spanish_words/models/words.dart';
 
 class FlashCard extends StatefulWidget {
@@ -21,14 +20,11 @@ class FlashCard extends StatefulWidget {
 
 class _FlashCardState extends State<FlashCard> {
   FlutterTts flutterTts = FlutterTts();
-  TtsState ttsState = TtsState.stopped;
 
   Future _speak(String string) async {
     await flutterTts.setLanguage("es-MX");
-
     await flutterTts.awaitSpeakCompletion(true);
-    var result = await flutterTts.speak(string);
-    if (result == 1) setState(() => ttsState = TtsState.playing);
+    await flutterTts.speak(string);
   }
 
   @override

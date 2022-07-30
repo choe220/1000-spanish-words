@@ -1,9 +1,6 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:spanish_words/flashcard.dart';
 import 'package:spanish_words/models/user.dart';
-import 'package:spanish_words/models/words.dart';
 
 class FlashcardsView extends StatefulWidget {
   final User user;
@@ -22,7 +19,6 @@ class _FlashcardsViewState extends State<FlashcardsView> {
   bool showAnswer = false;
 
   void updateShowAnswer() {
-    print(showAnswer);
     setState(() => showAnswer = !showAnswer);
   }
 
