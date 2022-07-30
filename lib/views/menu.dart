@@ -6,6 +6,7 @@ import 'package:spanish_words/views/matching_game.dart';
 import 'package:spanish_words/models/user.dart';
 import 'package:spanish_words/models/words.dart';
 import 'package:spanish_words/views/flashcards_view.dart';
+import 'package:spanish_words/views/words_list.dart';
 
 class Menu extends StatelessWidget {
   const Menu({Key? key}) : super(key: key);
@@ -38,6 +39,7 @@ class Menu extends StatelessWidget {
               padding: EdgeInsets.all(30.0),
               child: Text(
                 'Top 1000 Spanish Words',
+                textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 32,
                   color: Colors.white,
@@ -52,16 +54,29 @@ class Menu extends StatelessWidget {
                     ),
                 child: const Text('Flashcards')),
             ElevatedButton(
-                onPressed: () async {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => MatchingGame(
-                        words: user.currentSet!,
-                      ),
+              onPressed: () async {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => MatchingGame(
+                      words: user.currentSet!,
                     ),
-                  );
-                },
-                child: const Text('Matching Game'))
+                  ),
+                );
+              },
+              child: const Text('Matching Game'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => WordsList(
+                      words: user.words,
+                    ),
+                  ),
+                );
+              },
+              child: const Text('Search For Words'),
+            ),
           ],
         ),
       ),
