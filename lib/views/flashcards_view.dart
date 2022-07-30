@@ -19,6 +19,12 @@ class FlashcardsView extends StatefulWidget {
 
 class _FlashcardsViewState extends State<FlashcardsView> {
   int _index = 0;
+  bool showAnswer = false;
+
+  void updateShowAnswer() {
+    print(showAnswer);
+    setState(() => showAnswer = !showAnswer);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +44,11 @@ class _FlashcardsViewState extends State<FlashcardsView> {
               ),
             ],
           ),
-          FlashCard(word: widget.user.currentSet![_index]),
+          FlashCard(
+            word: widget.user.currentSet![_index],
+            showAnswer: showAnswer,
+            showAnswerCallback: updateShowAnswer,
+          ),
           const SizedBox(
             height: 15.0,
           ),
@@ -67,6 +77,7 @@ class _FlashcardsViewState extends State<FlashcardsView> {
                     ),
                     child: IconButton(
                       onPressed: () {
+                        showAnswer = false;
                         if (_index == 0) {
                           setState(() => _index = 10);
                         } else {
@@ -91,6 +102,7 @@ class _FlashcardsViewState extends State<FlashcardsView> {
                     ),
                     child: IconButton(
                       onPressed: () {
+                        showAnswer = false;
                         if (_index == 9) {
                           setState(() => _index = 0);
                         } else {

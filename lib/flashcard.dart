@@ -4,16 +4,22 @@ import 'package:flutter_tts/flutter_tts_web.dart';
 import 'package:spanish_words/models/words.dart';
 
 class FlashCard extends StatefulWidget {
-  const FlashCard({Key? key, required this.word}) : super(key: key);
+  const FlashCard({
+    Key? key,
+    required this.word,
+    required this.showAnswer,
+    required this.showAnswerCallback,
+  }) : super(key: key);
 
   final Word word;
+  final bool showAnswer;
+  final Function showAnswerCallback;
 
   @override
   State<FlashCard> createState() => _FlashCardState();
 }
 
 class _FlashCardState extends State<FlashCard> {
-  bool _showAnswer = false;
   FlutterTts flutterTts = FlutterTts();
   TtsState ttsState = TtsState.stopped;
 
@@ -28,9 +34,7 @@ class _FlashCardState extends State<FlashCard> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => setState(() {
-        _showAnswer = !_showAnswer;
-      }),
+      onTap: () => widget.showAnswerCallback(),
       child: SizedBox(
         width: MediaQuery.of(context).size.width * 0.9,
         height: MediaQuery.of(context).size.width * 0.4,
@@ -44,7 +48,9 @@ class _FlashCardState extends State<FlashCard> {
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Text(
-                      _showAnswer ? widget.word.english : widget.word.spanish,
+                      !widget.showAnswer
+                          ? widget.word.english
+                          : widget.word.spanish,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 100,
@@ -52,7 +58,7 @@ class _FlashCardState extends State<FlashCard> {
                     ),
                   ),
                 ),
-                if (!_showAnswer)
+                if (widget.showAnswer)
                   Positioned(
                     right: 0,
                     bottom: 0,
