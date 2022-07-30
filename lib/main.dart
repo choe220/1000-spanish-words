@@ -12,6 +12,8 @@ import 'package:spanish_words/models/words.dart';
 import 'package:spanish_words/views/menu.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   if (!kIsWeb) {
     if (Platform.isAndroid) {
       SystemChrome.setPreferredOrientations(
@@ -22,7 +24,6 @@ void main() async {
     }
   }
 
-  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
