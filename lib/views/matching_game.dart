@@ -52,17 +52,29 @@ class _MatchingGameState extends State<MatchingGame> {
   bool? checkCorrect() {
     if (englishSelected != null && spanishSelected != null) {
       if (englishSelected == spanishSelected) {
-        if (englishSelected!.mastery != null && englishSelected!.mastery! < 1) {
-          englishSelected!.mastery = englishSelected!.mastery! + 0.05;
+        if (englishSelected!.mastery != null) {
+          if (englishSelected!.mastery! < 1) {
+            englishSelected!.mastery = englishSelected!.mastery! + 0.05;
+          }
         } else {
           englishSelected!.mastery = 0.05;
         }
+        englishSelected!.mastery =
+            double.parse(englishSelected!.mastery!.toStringAsFixed(2));
         matches.add(englishSelected!);
         englishSelected = null;
         spanishSelected = null;
         setState(() {});
         return true;
       } else {
+        if (englishSelected!.mastery != null &&
+            englishSelected!.mastery! >= 0.05) {
+          englishSelected!.mastery = englishSelected!.mastery! - 0.05;
+        } else {
+          englishSelected!.mastery = 0;
+        }
+        englishSelected!.mastery =
+            double.parse(englishSelected!.mastery!.toStringAsFixed(2));
         englishSelected = null;
         spanishSelected = null;
         setState(() {});
@@ -74,9 +86,7 @@ class _MatchingGameState extends State<MatchingGame> {
   }
 
   _updateMastery(User user) async {
-    await user
-        .incrementMasteryForSet()
-        .then((value) async => await user.saveToFirebase());
+    await user.saveToFirebase();
   }
 
   double _checkMasteryCompletion() {
@@ -84,7 +94,7 @@ class _MatchingGameState extends State<MatchingGame> {
         0,
         (previousValue, element) =>
             (previousValue + (element.mastery ?? 0)) /
-            widget.user.currentSet!.length);
+            (widget.user.currentSet!.length + 1));
     return completion;
   }
 
