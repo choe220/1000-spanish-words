@@ -13,6 +13,8 @@ class WordsList extends StatefulWidget {
 
 class _WordsListState extends State<WordsList> {
   List<Word> _foundWords = [];
+  bool _filters = false;
+  RangeValues _currentRangeValues = const RangeValues(0, 100);
 
   @override
   void initState() {
@@ -20,16 +22,21 @@ class _WordsListState extends State<WordsList> {
     _foundWords = widget.words;
   }
 
-  void _filter(String enteredKeyword) {
+  void _filter(String? enteredKeyword) {
     List<Word> results = [];
-    if (enteredKeyword.isEmpty) {
-      results = widget.words;
-    } else {
+    if (enteredKeyword != null && enteredKeyword.isNotEmpty) {
       results = widget.words
           .where((word) =>
               word.english.toLowerCase().contains(enteredKeyword.toLowerCase()))
           .toList();
+    } else {
+      results = widget.words;
     }
+    results = results
+        .where((word) =>
+            (word.mastery ?? 0) >= _currentRangeValues.start / 100 &&
+            (word.mastery ?? 0) <= _currentRangeValues.end)
+        .toList();
     setState(() => _foundWords = results);
   }
 
@@ -59,6 +66,7 @@ class _WordsListState extends State<WordsList> {
                     padding: const EdgeInsets.all(5.0),
                     child: TextField(
                       onChanged: (value) => _filter(value),
+                      onSubmitted: (value) => _filter(value),
                       cursorColor: Colors.white,
                       style: const TextStyle(color: Colors.white),
                       decoration: const InputDecoration(
@@ -79,10 +87,33 @@ class _WordsListState extends State<WordsList> {
                     Icons.filter_alt_outlined,
                     color: Colors.white,
                   ),
-                  onPressed: () {},
+                  onPressed: () => setState(() => _filters = !_filters),
                 )
               ],
             ),
+            if (_filters)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Mastery Amount',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  RangeSlider(
+                    values: _currentRangeValues,
+                    max: 100,
+                    divisions: 50,
+                    labels: RangeLabels(
+                      '${_currentRangeValues.start.round()} %',
+                      '${_currentRangeValues.end.round()} %',
+                    ),
+                    onChanged: (values) => setState(() {
+                      _currentRangeValues = values;
+                      _filter(null);
+                    }),
+                  ),
+                ],
+              ),
             Expanded(
               child: _foundWords.isNotEmpty
                   ? ListView.builder(
@@ -93,7 +124,14 @@ class _WordsListState extends State<WordsList> {
                         elevation: 4,
                         child: ListTile(
                           title: Text(_foundWords[index].english),
-                          subtitle: Text(_foundWords[index].spanish),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(_foundWords[index].spanish),
+                              Text(
+                                  '${(_foundWords[index].mastery ?? 0) * 100} % mastery'),
+                            ],
+                          ),
                           trailing: IconButton(
                             icon: const Icon(Icons.volume_up),
                             onPressed: () async =>
@@ -106,6 +144,7 @@ class _WordsListState extends State<WordsList> {
                       'No Results Found',
                       style: TextStyle(
                         fontSize: 24,
+                        color: Colors.white,
                       ),
                     ),
             ),
