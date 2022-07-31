@@ -6,6 +6,7 @@ import 'package:spanish_words/views/matching_game.dart';
 import 'package:spanish_words/models/user.dart';
 import 'package:spanish_words/models/words.dart';
 import 'package:spanish_words/views/flashcards_view.dart';
+import 'package:spanish_words/views/speech_game.dart';
 import 'package:spanish_words/views/words_list.dart';
 
 class Menu extends StatelessWidget {
@@ -64,6 +65,18 @@ class Menu extends StatelessWidget {
                 );
               },
               child: const Text('Matching Game'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => SpeechGame(
+                      words: user.currentSet!,
+                    ),
+                  ),
+                );
+              },
+              child: const Text('Speech Game'),
             ),
             ElevatedButton(
               onPressed: () async {
