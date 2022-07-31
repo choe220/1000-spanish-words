@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:spanish_words/match_card.dart';
 import 'package:spanish_words/models/user.dart';
 import 'package:spanish_words/models/words.dart';
+import 'package:spanish_words/widgets/match_card.dart';
 
 class MatchingGame extends StatefulWidget {
   const MatchingGame({

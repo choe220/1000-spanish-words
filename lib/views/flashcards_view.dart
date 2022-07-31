@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:spanish_words/flashcard.dart';
 import 'package:spanish_words/models/user.dart';
+import 'package:spanish_words/widgets/flashcard.dart';
 
 class FlashcardsView extends StatefulWidget {
   final User user;
