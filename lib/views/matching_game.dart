@@ -99,128 +99,132 @@ class _MatchingGameState extends State<MatchingGame> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 46, 46, 46),
-      body: _checkMasteryCompletion() <= 1
-          ? matches.length != 10
-              ? SingleChildScrollView(
-                  child: Stack(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          // English
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                ...english.map((e) {
-                                  return MatchCard(
-                                    e,
-                                    english: true,
-                                    selected:
-                                        e == englishSelected ? true : false,
-                                    correct: matches.contains(e),
-                                    mute: _mute,
-                                    onTapCallback: updateSelected,
-                                  );
-                                })
-                              ],
-                            ),
-                          ),
-
-                          // Spanish
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                ...spanish.map((e) => MatchCard(
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: const Color.fromARGB(255, 46, 46, 46),
+        body: _checkMasteryCompletion() <= 1
+            ? matches.length != 10
+                ? SingleChildScrollView(
+                    child: Stack(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            // English
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  ...english.map((e) {
+                                    return MatchCard(
                                       e,
-                                      english: false,
+                                      english: true,
                                       selected:
-                                          e == spanishSelected ? true : false,
+                                          e == englishSelected ? true : false,
                                       correct: matches.contains(e),
                                       mute: _mute,
                                       onTapCallback: updateSelected,
-                                    )),
-                              ],
+                                    );
+                                  })
+                                ],
+                              ),
+                            ),
+
+                            // Spanish
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  ...spanish.map((e) => MatchCard(
+                                        e,
+                                        english: false,
+                                        selected:
+                                            e == spanishSelected ? true : false,
+                                        correct: matches.contains(e),
+                                        mute: _mute,
+                                        onTapCallback: updateSelected,
+                                      )),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        Positioned(
+                          bottom: 10,
+                          right: 10,
+                          child: IconButton(
+                            onPressed: () => setState(() => _mute = !_mute),
+                            icon: Icon(
+                              _mute ? Icons.volume_mute : Icons.volume_up,
+                              color: Colors.white,
                             ),
                           ),
-                        ],
-                      ),
-                      Positioned(
-                        bottom: 10,
-                        right: 10,
-                        child: IconButton(
-                          onPressed: () => setState(() => _mute = !_mute),
-                          icon: Icon(
-                            _mute ? Icons.volume_mute : Icons.volume_up,
-                            color: Colors.white,
-                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                )
-              : Center(
-                  child: FutureBuilder(
-                    future: _updateMastery(widget.user),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const CircularProgressIndicator();
-                      }
-                      if (snapshot.hasError) {
-                        return Text(
-                            'An Error Occured:\n${snapshot.error.toString()}');
-                      }
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text(
-                            'You\'ve Matched Them All!',
-                            style: TextStyle(color: Colors.white, fontSize: 32),
-                          ),
-                          ElevatedButton(
-                            onPressed: () => setState(() {
-                              matches = [];
-                              english.shuffle();
-                              spanish.shuffle();
-                            }),
-                            child: const Text('Start Over'),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                )
-          : Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    'You\'ve Mastered This Set!',
-                    style: TextStyle(color: Colors.white, fontSize: 32),
-                  ),
-                  ElevatedButton(
-                    onPressed: () async {
-                      matches = [];
-                      await widget.user.generateSet().then(
-                          (value) async => await widget.user.saveToFirebase());
-                      for (var element in widget.user.currentSet!) {
-                        english.add(element);
-                        spanish.add(element);
-                      }
-                      english.shuffle();
-                      spanish.shuffle();
-                      setState(() {});
-                    },
-                    child: const Text('Next Set'),
-                  ),
-                ],
+                      ],
+                    ),
+                  )
+                : Center(
+                    child: FutureBuilder(
+                      future: _updateMastery(widget.user),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const CircularProgressIndicator();
+                        }
+                        if (snapshot.hasError) {
+                          return Text(
+                              'An Error Occured:\n${snapshot.error.toString()}');
+                        }
+                        return Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              'You\'ve Matched Them All!',
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 32),
+                            ),
+                            ElevatedButton(
+                              onPressed: () => setState(() {
+                                matches = [];
+                                english.shuffle();
+                                spanish.shuffle();
+                              }),
+                              child: const Text('Start Over'),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  )
+            : Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'You\'ve Mastered This Set!',
+                      style: TextStyle(color: Colors.white, fontSize: 32),
+                    ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        matches = [];
+                        await widget.user.generateSet().then((value) async =>
+                            await widget.user.saveToFirebase());
+                        for (var element in widget.user.currentSet!) {
+                          english.add(element);
+                          spanish.add(element);
+                        }
+                        english.shuffle();
+                        spanish.shuffle();
+                        setState(() {});
+                      },
+                      child: const Text('Next Set'),
+                    ),
+                  ],
+                ),
               ),
-            ),
+      ),
     );
   }
 }

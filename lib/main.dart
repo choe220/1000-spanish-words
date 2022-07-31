@@ -79,28 +79,30 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 46, 46, 46),
-      body: Center(
-        child: FutureBuilder(
-          future: getUser(),
-          builder: (context, AsyncSnapshot<User?> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator();
-            }
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: const Color.fromARGB(255, 46, 46, 46),
+        body: Center(
+          child: FutureBuilder(
+            future: getUser(),
+            builder: (context, AsyncSnapshot<User?> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const CircularProgressIndicator();
+              }
 
-            if (snapshot.hasError) {
-              return Text(
-                snapshot.error.toString(),
-                style: const TextStyle(color: Colors.white),
+              if (snapshot.hasError) {
+                return Text(
+                  snapshot.error.toString(),
+                  style: const TextStyle(color: Colors.white),
+                );
+              }
+
+              return ChangeNotifierProvider.value(
+                value: snapshot.data,
+                child: const Menu(),
               );
-            }
-
-            return ChangeNotifierProvider.value(
-              value: snapshot.data,
-              child: const Menu(),
-            );
-          },
+            },
+          ),
         ),
       ),
     );
