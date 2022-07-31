@@ -58,7 +58,7 @@ class Menu extends StatelessWidget {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => MatchingGame(
-                      words: user.currentSet!,
+                      user: user,
                     ),
                   ),
                 );
@@ -70,7 +70,7 @@ class Menu extends StatelessWidget {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => WordsList(
-                      words: user.words,
+                      words: (user.words + user.currentSet!),
                     ),
                   ),
                 );
