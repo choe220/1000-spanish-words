@@ -33,4 +33,24 @@ class User with ChangeNotifier {
     var random = Random();
     currentSet = List.generate(10, (_) => words[random.nextInt(words.length)]);
   }
+
+  Future<void> incrementMasteryForSet(List<Word> wordsToUpdate) async {
+    for (var word in wordsToUpdate) {
+      Word userWord = words.firstWhere((element) => element == word);
+      if (userWord.mastery != null && userWord.mastery! < 1) {
+        userWord.mastery = userWord.mastery! + 0.05;
+      } else {
+        userWord.mastery = 0.05;
+      }
+    }
+  }
+
+  Future<void> incrementMastery(Word word) async {
+    Word userWord = words.firstWhere((element) => element == word);
+    if (userWord.mastery != null && userWord.mastery! < 1) {
+      userWord.mastery = userWord.mastery! + 0.05;
+    } else {
+      userWord.mastery = 0.05;
+    }
+  }
 }
