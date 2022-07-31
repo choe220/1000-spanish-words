@@ -8,3 +8,20 @@ String replaceAccents(String string) {
   string.replaceAll(RegExp(r'ñ'), 'n');
   return string;
 }
+
+String? replaceNumbers(String number) {
+  Map<String, String> dict = {
+    '1': 'uno',
+    '2': 'dos',
+    '3': 'tres',
+    '4': 'quatro',
+    '5': 'cinco',
+    '6': 'seis',
+    '7': 'siete',
+    '8': 'ocho',
+    '9': 'nueve',
+    '10': 'diez',
+    '100': 'cien',
+  };
+  return dict[number];
+}

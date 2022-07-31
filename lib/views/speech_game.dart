@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:spanish_words/models/words.dart';
+import 'package:spanish_words/util.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
@@ -20,6 +21,8 @@ class SpeechGame extends StatefulWidget {
 class _SpeechGameState extends State<SpeechGame> {
   final SpeechToText _speechToText = SpeechToText();
   bool _speechEnabled = false;
+  bool? _correct;
+  late Word _currentWord;
   String _lastWords = '';
 
   void _initSpeech() async {
@@ -31,12 +34,19 @@ class _SpeechGameState extends State<SpeechGame> {
   void initState() {
     super.initState();
     _initSpeech();
+    _currentWord = _generateWord();
+  }
+
+  Word _generateWord() {
+    return widget.words[Random().nextInt(widget.words.length)];
   }
 
   void _startListening() async {
+    _correct = null;
     await _speechToText.listen(
       localeId: 'es_MX',
       onResult: _onSpeechResult,
+      partialResults: false,
     );
     setState(() {});
   }
@@ -46,86 +56,103 @@ class _SpeechGameState extends State<SpeechGame> {
     setState(() {});
   }
 
-  void _onSpeechResult(SpeechRecognitionResult result) {
-    setState(() {
-      _lastWords = result.recognizedWords;
-    });
+  void _onSpeechResult(SpeechRecognitionResult result) async {
+    _lastWords = result.recognizedWords;
+    if (int.tryParse(_lastWords) != null) {
+      String? replaced = replaceNumbers(_lastWords);
+      if (replaced != null) _lastWords = replaced;
+    }
+    _correct = _lastWords.trim().toLowerCase() ==
+        _currentWord.spanish.trim().toLowerCase();
+    setState(() {});
+    if (_correct!) {
+      await Future.delayed(const Duration(seconds: 2));
+      _currentWord = _generateWord();
+      _correct = null;
+      setState(() {});
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 46, 46, 46),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Container(
-              padding: const EdgeInsets.all(16),
-              child: Text(
-                widget.words[Random().nextInt(9)].english,
-                style: const TextStyle(
-                  fontSize: 45.0,
-                  color: Colors.white,
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: const Color.fromARGB(255, 46, 46, 46),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Container(
+                padding: const EdgeInsets.all(16),
+                child: Text(
+                  _currentWord.english,
+                  style: const TextStyle(
+                    fontSize: 45.0,
+                    color: Colors.white,
+                  ),
                 ),
               ),
-            ),
-            Expanded(
-              child: Padding(
+              Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Text(
                   _speechEnabled
-                      ? 'Tap the microphone to start listening...'
+                      ? _speechToText.isNotListening
+                          ? 'Tap the microphone to start listening...'
+                          : 'Listening...'
                       : 'Speech not available',
                   style: const TextStyle(color: Colors.white),
                 ),
               ),
-            ),
-            Expanded(
-              child: Container(
+              Container(
                 padding: const EdgeInsets.all(16),
                 child: Text(
-                  // If listening is active show the recognized words
-                  _speechToText.isListening
-                      ? _lastWords
-                      // If listening isn't active but could be tell the user
-                      // how to start it, otherwise indicate that speech
-                      // recognition is not yet ready or not supported on
-                      // the target device
-                      : '',
+                  _lastWords,
+                  style: TextStyle(
+                    color: _correct != null
+                        ? _correct!
+                            ? Colors.green
+                            : Colors.red
+                        : Colors.white,
+                    fontSize: 32,
+                  ),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed:
-                          // If not yet listening for speech start, otherwise stop
-                          _speechToText.isNotListening
-                              ? _startListening
-                              : _stopListening,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Icon(_speechToText.isNotListening
-                              ? Icons.mic_off
-                              : Icons.mic),
-                          const Expanded(
-                              child: Text(
-                            'Speak',
-                            textAlign: TextAlign.center,
-                          )),
-                        ],
+              Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: _speechToText.isNotListening
+                            ? _startListening
+                            : _stopListening,
+                        style: _speechToText.isListening
+                            ? ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all(Colors.redAccent))
+                            : const ButtonStyle(),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Icon(_speechToText.isNotListening
+                                ? Icons.mic_off
+                                : Icons.mic),
+                            Expanded(
+                                child: Text(
+                              _speechToText.isNotListening
+                                  ? 'Speak'
+                                  : 'Stop Speaking',
+                              textAlign: TextAlign.center,
+                            )),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
