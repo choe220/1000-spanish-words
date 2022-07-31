@@ -85,7 +85,6 @@ class _MatchingGameState extends State<MatchingGame> {
         (previousValue, element) =>
             (previousValue + (element.mastery ?? 0)) /
             widget.user.currentSet!.length);
-    print(completion);
     return completion;
   }
 
