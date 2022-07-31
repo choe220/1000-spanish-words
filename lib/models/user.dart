@@ -31,12 +31,21 @@ class User with ChangeNotifier {
 
   Future<void> generateSet() async {
     var random = Random();
+    if (currentSet != null) {
+      for (Word word in currentSet!) {
+        words.add(word);
+      }
+    }
     currentSet = List.generate(10, (_) => words[random.nextInt(words.length)]);
+    for (Word word in currentSet!) {
+      words.remove(word);
+    }
   }
 
-  Future<void> incrementMasteryForSet(List<Word> wordsToUpdate) async {
-    for (var word in wordsToUpdate) {
-      Word userWord = words.firstWhere((element) => element == word);
+  Future<void> incrementMasteryForSet() async {
+    for (var word in currentSet!) {
+      Word userWord =
+          currentSet!.firstWhere((element) => element.english == word.english);
       if (userWord.mastery != null && userWord.mastery! < 1) {
         userWord.mastery = userWord.mastery! + 0.05;
       } else {
