@@ -71,6 +71,17 @@ class _SpeechGameState extends State<SpeechGame> {
               ),
             ),
             Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  _speechEnabled
+                      ? 'Tap the microphone to start listening...'
+                      : 'Speech not available',
+                  style: const TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+            Expanded(
               child: Container(
                 padding: const EdgeInsets.all(16),
                 child: Text(
@@ -81,9 +92,7 @@ class _SpeechGameState extends State<SpeechGame> {
                       // how to start it, otherwise indicate that speech
                       // recognition is not yet ready or not supported on
                       // the target device
-                      : _speechEnabled
-                          ? 'Tap the microphone to start listening...'
-                          : 'Speech not available',
+                      : '',
                 ),
               ),
             ),
@@ -118,13 +127,6 @@ class _SpeechGameState extends State<SpeechGame> {
             ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed:
-            // If not yet listening for speech start, otherwise stop
-            _speechToText.isNotListening ? _startListening : _stopListening,
-        tooltip: 'Listen',
-        child: Icon(_speechToText.isNotListening ? Icons.mic_off : Icons.mic),
       ),
     );
   }
