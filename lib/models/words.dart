@@ -22,7 +22,7 @@ class Word {
         english: json["english"],
         spanish: json["spanish"],
         weight: json["weight"],
-        mastery: json['mastery'],
+        mastery: json['mastery']?.toDouble(),
       );
 
   Map<String, dynamic> toJson() => {
