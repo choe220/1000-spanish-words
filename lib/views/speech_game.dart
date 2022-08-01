@@ -26,6 +26,7 @@ class _SpeechGameState extends State<SpeechGame> {
   bool? _correct;
   late Word _currentWord;
   String _lastWords = '';
+  int _attempts = 0;
 
   void _initSpeech() async {
     _speechEnabled = await _speechToText.initialize();
@@ -63,9 +64,13 @@ class _SpeechGameState extends State<SpeechGame> {
     _lastWords = result.recognizedWords;
     double similarity = StringSimilarity.compareTwoStrings('healed', 'sealed');
 
-    if (similarity > 0.75) {
+    if (similarity > 0.75 && similarity < 0.8) {
       _lastWords = _currentWord.spanish;
-      debugPrint('Eh similar enough');
+      debugPrint("""
+          Spoken: $_lastWords || Truth: $_currentWord
+          Similarity: $similarity
+          Eh similar enough
+      """);
     }
 
     if (int.tryParse(_lastWords) != null) {
@@ -76,14 +81,42 @@ class _SpeechGameState extends State<SpeechGame> {
         _currentWord.spanish.trim().toLowerCase();
     setState(() {});
     if (_correct!) {
-      await widget.user
-          .incrementMastery(_currentWord)
-          .then((value) async => await widget.user.saveToFirebase());
+      _attempts = 0;
+      if (_currentWord.mastery != null) {
+        if (_currentWord.mastery! < 1) {
+          _currentWord.mastery = _currentWord.mastery! + 0.05;
+        }
+      } else {
+        _currentWord.mastery = 0.05;
+      }
+      _currentWord.mastery =
+          double.parse(_currentWord.mastery!.toStringAsFixed(2));
+      await widget.user.saveToFirebase();
       await Future.delayed(const Duration(seconds: 2));
       _lastWords = '';
       _currentWord = _generateWord();
       _correct = null;
       setState(() {});
+    } else {
+      if (_attempts == 3) {
+        _lastWords = 'Correct Answer: ${_currentWord.spanish}';
+        if (_currentWord.mastery != null && _currentWord.mastery! >= 0.05) {
+          _currentWord.mastery = _currentWord.mastery! - 0.05;
+        } else {
+          _currentWord.mastery = 0;
+        }
+        _currentWord.mastery =
+            double.parse(_currentWord.mastery!.toStringAsFixed(2));
+        await widget.user.saveToFirebase();
+        await Future.delayed(const Duration(seconds: 2));
+        _lastWords = '';
+        _currentWord = _generateWord();
+        _correct = null;
+        _attempts = 0;
+        setState(() {});
+        return;
+      }
+      _attempts += 1;
     }
   }
 
@@ -117,6 +150,13 @@ class _SpeechGameState extends State<SpeechGame> {
                   style: const TextStyle(color: Colors.white),
                 ),
               ),
+              if (_attempts != 0)
+                Text(
+                  'Attempts: $_attempts',
+                  style: const TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
               Container(
                 padding: const EdgeInsets.all(16),
                 child: Text(
