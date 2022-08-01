@@ -117,7 +117,7 @@ class Menu extends StatelessWidget {
                 onPressed: () async {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => const Settings(),
+                      builder: (context) => Settings(user: user),
                     ),
                   );
                 },
