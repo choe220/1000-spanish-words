@@ -1,18 +1,20 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:spanish_words/models/user.dart';
 import 'package:spanish_words/models/words.dart';
 import 'package:spanish_words/util.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
+import 'package:string_similarity/string_similarity.dart';
 
 class SpeechGame extends StatefulWidget {
   const SpeechGame({
     Key? key,
-    required this.words,
+    required this.user,
   }) : super(key: key);
 
-  final List<Word> words;
+  final User user;
 
   @override
   State<SpeechGame> createState() => _SpeechGameState();
@@ -38,7 +40,8 @@ class _SpeechGameState extends State<SpeechGame> {
   }
 
   Word _generateWord() {
-    return widget.words[Random().nextInt(widget.words.length)];
+    return widget
+        .user.currentSet![Random().nextInt(widget.user.currentSet!.length)];
   }
 
   void _startListening() async {
@@ -58,6 +61,13 @@ class _SpeechGameState extends State<SpeechGame> {
 
   void _onSpeechResult(SpeechRecognitionResult result) async {
     _lastWords = result.recognizedWords;
+    double similarity = StringSimilarity.compareTwoStrings('healed', 'sealed');
+
+    if (similarity > 0.75) {
+      _lastWords = _currentWord.spanish;
+      debugPrint('Eh similar enough');
+    }
+
     if (int.tryParse(_lastWords) != null) {
       String? replaced = replaceNumbers(_lastWords);
       if (replaced != null) _lastWords = replaced;
@@ -66,7 +76,11 @@ class _SpeechGameState extends State<SpeechGame> {
         _currentWord.spanish.trim().toLowerCase();
     setState(() {});
     if (_correct!) {
+      await widget.user
+          .incrementMastery(_currentWord)
+          .then((value) async => await widget.user.saveToFirebase());
       await Future.delayed(const Duration(seconds: 2));
+      _lastWords = '';
       _currentWord = _generateWord();
       _correct = null;
       setState(() {});

@@ -71,7 +71,7 @@ class Menu extends StatelessWidget {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => SpeechGame(
-                      words: user.currentSet!,
+                      user: user,
                     ),
                   ),
                 );
