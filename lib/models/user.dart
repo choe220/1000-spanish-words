@@ -55,7 +55,8 @@ class User with ChangeNotifier {
   }
 
   Future<void> incrementMastery(Word word) async {
-    Word userWord = words.firstWhere((element) => element == word);
+    Word userWord =
+        words.firstWhere((element) => element.english == word.english);
     if (userWord.mastery != null && userWord.mastery! < 1) {
       userWord.mastery = userWord.mastery! + 0.05;
     } else {
