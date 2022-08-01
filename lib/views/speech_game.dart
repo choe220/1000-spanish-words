@@ -98,7 +98,7 @@ class _SpeechGameState extends State<SpeechGame> {
       _correct = null;
       setState(() {});
     } else {
-      if (_attempts == 3) {
+      if (_attempts == widget.user.attempts) {
         _lastWords = 'Correct Answer: ${_currentWord.spanish}';
         if (_currentWord.mastery != null && _currentWord.mastery! >= 0.05) {
           _currentWord.mastery = _currentWord.mastery! - 0.05;
