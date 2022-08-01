@@ -6,6 +6,7 @@ import 'package:spanish_words/views/matching_game.dart';
 import 'package:spanish_words/models/user.dart';
 import 'package:spanish_words/models/words.dart';
 import 'package:spanish_words/views/flashcards_view.dart';
+import 'package:spanish_words/views/settings.dart';
 import 'package:spanish_words/views/speech_game.dart';
 import 'package:spanish_words/views/words_list.dart';
 
@@ -34,61 +35,98 @@ class Menu extends StatelessWidget {
       backgroundColor: const Color.fromARGB(255, 46, 46, 46),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Padding(
-              padding: EdgeInsets.all(30.0),
-              child: Text(
-                'Top 1000 Spanish Words',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 32,
-                  color: Colors.white,
+            Column(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.all(30.0),
+                  child: Text(
+                    'Top 1000 Spanish Words',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 32,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            ElevatedButton(
-                onPressed: () async => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => FlashcardsView(user: user),
+                Column(
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.75,
+                      child: ElevatedButton(
+                          onPressed: () async => Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      FlashcardsView(user: user),
+                                ),
+                              ),
+                          child: const Text('Flashcards')),
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.75,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => MatchingGame(
+                                user: user,
+                              ),
+                            ),
+                          );
+                        },
+                        child: const Text('Matching Game'),
                       ),
                     ),
-                child: const Text('Flashcards')),
-            ElevatedButton(
-              onPressed: () async {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => MatchingGame(
-                      user: user,
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.75,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => SpeechGame(
+                                user: user,
+                              ),
+                            ),
+                          );
+                        },
+                        child: const Text('Speech Game'),
+                      ),
                     ),
-                  ),
-                );
-              },
-              child: const Text('Matching Game'),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.75,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => WordsList(
+                                words: (user.words + user.currentSet!),
+                              ),
+                            ),
+                          );
+                        },
+                        child: const Text('Search For Words'),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            ElevatedButton(
-              onPressed: () async {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => SpeechGame(
-                      user: user,
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.75,
+              child: ElevatedButton(
+                onPressed: () async {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const Settings(),
                     ),
-                  ),
-                );
-              },
-              child: const Text('Speech Game'),
+                  );
+                },
+                child: const Text('Settings'),
+              ),
             ),
-            ElevatedButton(
-              onPressed: () async {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => WordsList(
-                      words: (user.words + user.currentSet!),
-                    ),
-                  ),
-                );
-              },
-              child: const Text('Search For Words'),
+            const SizedBox(
+              height: 0,
             ),
           ],
         ),
