@@ -101,7 +101,6 @@ class _MatchingGameState extends State<MatchingGame> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: const Color.fromARGB(255, 46, 46, 46),
         body: _checkMasteryCompletion() <= 0.99
             ? matches.length != 10
                 ? SingleChildScrollView(

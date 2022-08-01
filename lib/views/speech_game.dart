@@ -124,7 +124,6 @@ class _SpeechGameState extends State<SpeechGame> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: const Color.fromARGB(255, 46, 46, 46),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

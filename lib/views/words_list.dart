@@ -51,7 +51,6 @@ class _WordsListState extends State<WordsList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 46, 46, 46),
       body: Padding(
         padding: const EdgeInsets.all(15.0),
         child: Column(

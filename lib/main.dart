@@ -40,6 +40,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         colorSchemeSeed: const Color.fromARGB(255, 53, 53, 53),
+        scaffoldBackgroundColor: const Color.fromARGB(255, 46, 46, 46),
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
@@ -81,7 +82,6 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: const Color.fromARGB(255, 46, 46, 46),
         body: Center(
           child: FutureBuilder(
             future: getUser(),

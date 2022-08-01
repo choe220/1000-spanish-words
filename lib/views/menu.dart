@@ -32,7 +32,6 @@ class Menu extends StatelessWidget {
   Widget build(BuildContext context) {
     User user = Provider.of<User>(context);
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 46, 46, 46),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
