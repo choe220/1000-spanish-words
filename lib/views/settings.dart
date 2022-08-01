@@ -43,6 +43,7 @@ class _SettingsState extends State<Settings> {
                   ),
                 ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
                       decoration: BoxDecoration(
