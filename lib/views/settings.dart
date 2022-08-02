@@ -16,6 +16,15 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
+  late RangeValues _currentRangeValues;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentRangeValues = RangeValues(
+        widget.user.speechSensitivity[0], widget.user.speechSensitivity[1]);
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -123,6 +132,27 @@ class _SettingsState extends State<Settings> {
                 ),
                 const SizedBox(
                   height: 15,
+                ),
+                const WhiteText(
+                  'Speech Sensitivity',
+                ),
+                RangeSlider(
+                  values: _currentRangeValues,
+                  max: 100,
+                  divisions: 50,
+                  labels: RangeLabels(
+                    '${_currentRangeValues.start.round()} %',
+                    '${_currentRangeValues.end.round()} %',
+                  ),
+                  onChanged: (values) =>
+                      setState(() => _currentRangeValues = values),
+                  onChangeEnd: (value) async => {
+                    widget.user.speechSensitivity = [
+                      _currentRangeValues.start,
+                      _currentRangeValues.end
+                    ],
+                    await widget.user.saveToFirebase(),
+                  },
                 ),
               ],
             ),

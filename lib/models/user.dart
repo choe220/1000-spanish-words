@@ -8,21 +8,29 @@ class User with ChangeNotifier {
   List<Word> words;
   List<Word>? currentSet;
   int attempts;
+  List speechSensitivity;
 
-  User({required this.words, this.currentSet, this.attempts = 3});
+  User({
+    required this.words,
+    this.currentSet,
+    this.attempts = 3,
+    this.speechSensitivity = const [75, 80],
+  });
 
   User.fromFirebase(Map<String, dynamic> data)
       : words = List<Word>.from(data['words'].map((e) => Word.fromJson(e))),
         currentSet = data['current_set'] != null
             ? List<Word>.from(data['current_set'].map((e) => Word.fromJson(e)))
             : null,
-        attempts = data['attempts'] ?? 3;
+        attempts = data['attempts'] ?? 3,
+        speechSensitivity = data['speechSensitivity'] ?? const [75, 80];
 
   Map<String, dynamic> toFirebase() {
     return {
       'words': words.map((e) => e.toJson()).toList(),
       'current_set': currentSet?.map((e) => e.toJson()).toList(),
       'attempts': attempts,
+      'speechSensitivity': speechSensitivity,
     };
   }
 

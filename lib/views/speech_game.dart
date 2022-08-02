@@ -65,7 +65,8 @@ class _SpeechGameState extends State<SpeechGame> {
     _lastWords = result.recognizedWords;
     double similarity = StringSimilarity.compareTwoStrings('healed', 'sealed');
 
-    if (similarity > 0.75 && similarity < 0.8) {
+    if (similarity > (widget.user.speechSensitivity[0] / 100) &&
+        similarity < (widget.user.speechSensitivity[1])) {
       _lastWords = _currentWord.spanish;
       debugPrint("""
           Spoken: $_lastWords || Truth: $_currentWord
