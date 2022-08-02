@@ -63,16 +63,17 @@ class _SpeechGameState extends State<SpeechGame> {
 
   void _onSpeechResult(SpeechRecognitionResult result) async {
     _lastWords = result.recognizedWords;
-    double similarity = StringSimilarity.compareTwoStrings('healed', 'sealed');
+    double similarity =
+        StringSimilarity.compareTwoStrings(_lastWords, _currentWord.spanish);
 
     if (similarity > (widget.user.speechSensitivity[0] / 100) &&
         similarity < (widget.user.speechSensitivity[1])) {
-      _lastWords = _currentWord.spanish;
       debugPrint("""
-          Spoken: $_lastWords || Truth: $_currentWord
+          Spoken: $_lastWords || Truth: ${_currentWord.spanish}
           Similarity: $similarity
           Eh similar enough
       """);
+      _lastWords = _currentWord.spanish;
     }
 
     if (int.tryParse(_lastWords) != null) {
