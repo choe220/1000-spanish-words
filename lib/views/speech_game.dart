@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:spanish_words/models/user.dart';
 import 'package:spanish_words/models/words.dart';
 import 'package:spanish_words/util.dart';
+import 'package:spanish_words/widgets/white_text.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:string_similarity/string_similarity.dart';
@@ -107,6 +108,7 @@ class _SpeechGameState extends State<SpeechGame> {
         }
         _currentWord.mastery =
             double.parse(_currentWord.mastery!.toStringAsFixed(2));
+        _currentWord.flagged = true;
         await widget.user.saveToFirebase();
         await Future.delayed(const Duration(seconds: 2));
         _lastWords = '';
@@ -130,31 +132,24 @@ class _SpeechGameState extends State<SpeechGame> {
             children: <Widget>[
               Container(
                 padding: const EdgeInsets.all(16),
-                child: Text(
+                child: WhiteText(
                   _currentWord.english,
-                  style: const TextStyle(
-                    fontSize: 45.0,
-                    color: Colors.white,
-                  ),
+                  fontSize: 45,
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Text(
+                child: WhiteText(
                   _speechEnabled
                       ? _speechToText.isNotListening
                           ? 'Tap the microphone to start listening...'
                           : 'Listening...'
                       : 'Speech not available',
-                  style: const TextStyle(color: Colors.white),
                 ),
               ),
               if (_attempts != 0)
-                Text(
+                WhiteText(
                   'Attempts: $_attempts',
-                  style: const TextStyle(
-                    color: Colors.white,
-                  ),
                 ),
               Container(
                 padding: const EdgeInsets.all(16),

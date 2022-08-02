@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:spanish_words/models/user.dart';
 import 'package:spanish_words/models/words.dart';
+import 'package:spanish_words/widgets/white_text.dart';
 
 class WordsList extends StatefulWidget {
-  const WordsList({Key? key, required this.words}) : super(key: key);
+  const WordsList({Key? key, required this.user}) : super(key: key);
 
-  final List<Word> words;
+  final User user;
 
   @override
   State<WordsList> createState() => _WordsListState();
@@ -15,22 +17,28 @@ class _WordsListState extends State<WordsList> {
   List<Word> _foundWords = [];
   bool _filters = false;
   RangeValues _currentRangeValues = const RangeValues(0, 100);
+  bool _onlyFlagged = false;
 
   @override
   void initState() {
     super.initState();
-    _foundWords = widget.words;
+    _foundWords = (widget.user.words + widget.user.currentSet!);
   }
 
   void _filter(String? enteredKeyword) {
     List<Word> results = [];
+    List<Word> wordPool = _onlyFlagged
+        ? (widget.user.words + widget.user.currentSet!)
+            .where((word) => word.flagged != null && word.flagged!)
+            .toList()
+        : (widget.user.words + widget.user.currentSet!);
     if (enteredKeyword != null && enteredKeyword.isNotEmpty) {
-      results = widget.words
+      results = wordPool
           .where((word) =>
               word.english.toLowerCase().contains(enteredKeyword.toLowerCase()))
           .toList();
     } else {
-      results = widget.words;
+      results = wordPool;
     }
     results = results
         .where((word) =>
@@ -94,9 +102,8 @@ class _WordsListState extends State<WordsList> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  const WhiteText(
                     'Mastery Amount',
-                    style: TextStyle(color: Colors.white),
                   ),
                   RangeSlider(
                     values: _currentRangeValues,
@@ -110,6 +117,29 @@ class _WordsListState extends State<WordsList> {
                       _currentRangeValues = values;
                       _filter(null);
                     }),
+                  ),
+                  const SizedBox(
+                    height: 10.0,
+                  ),
+                  Row(
+                    children: [
+                      Checkbox(
+                        fillColor: MaterialStateProperty.all(Colors.white),
+                        checkColor: Colors.black,
+                        value: _onlyFlagged,
+                        onChanged: (value) => {
+                          setState(() => _onlyFlagged = value!),
+                          _filter(null),
+                        },
+                      ),
+                      InkWell(
+                        onTap: () => {
+                          setState(() => _onlyFlagged = !_onlyFlagged),
+                          _filter(null),
+                        },
+                        child: const WhiteText('Show Only Flagged Words'),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -131,10 +161,28 @@ class _WordsListState extends State<WordsList> {
                                   '${(_foundWords[index].mastery ?? 0) * 100} % mastery'),
                             ],
                           ),
-                          trailing: IconButton(
-                            icon: const Icon(Icons.volume_up),
-                            onPressed: () async =>
-                                await _speak(_foundWords[index].spanish),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Row(
+                                children: [
+                                  const Text('Flagged'),
+                                  Checkbox(
+                                    value: _foundWords[index].flagged ?? false,
+                                    onChanged: (value) async => {
+                                      _foundWords[index].flagged = value,
+                                      setState(() {}),
+                                      await widget.user.saveToFirebase(),
+                                    },
+                                  ),
+                                ],
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.volume_up),
+                                onPressed: () async =>
+                                    await _speak(_foundWords[index].spanish),
+                              ),
+                            ],
                           ),
                         ),
                       ),

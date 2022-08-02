@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:spanish_words/models/user.dart';
+import 'package:spanish_words/models/words.dart';
+import 'package:spanish_words/widgets/white_text.dart';
 
 class Settings extends StatefulWidget {
   const Settings({
@@ -26,14 +28,39 @@ class _SettingsState extends State<Settings> {
               children: [
                 ElevatedButton(
                   onPressed: () async {
-                    widget.user.generateSet().then((_) => widget.user
+                    widget.user.generateSet(null).then((_) => widget.user
                         .saveToFirebase()
                         .then((_) => setState(() {})));
                   },
                   child: const Text('Generate New Set'),
                 ),
+                // const SizedBox(
+                //   height: 15,
+                // ),
+                // ElevatedButton(
+                //   onPressed: () async => {
+                //     widget.user.words += widget.user.currentSet!,
+                //     widget.user.currentSet = [],
+                //     await widget.user.saveToFirebase(),
+                //   },
+                //   child: const Text('Clear Current Set'),
+                // ),
                 const SizedBox(
                   height: 15,
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    List<Word> flagged = (widget.user.words +
+                            widget.user.currentSet!)
+                        .where((word) => word.flagged != null && word.flagged!)
+                        .toList();
+                    await widget.user.generateSet(flagged).then(
+                        (value) async => await widget.user.saveToFirebase());
+                  },
+                  child: const Text('Create Set From Flagged'),
+                ),
+                const SizedBox(
+                  height: 30,
                 ),
                 const Text(
                   'Increase Speech Attempts',
@@ -99,6 +126,9 @@ class _SettingsState extends State<Settings> {
                       ),
                     ),
                   ],
+                ),
+                const SizedBox(
+                  height: 15,
                 ),
               ],
             ),

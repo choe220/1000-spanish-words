@@ -9,6 +9,7 @@ class Word {
     required this.spanish,
     required this.weight,
     this.mastery,
+    this.flagged,
     this.correct,
   });
 
@@ -16,12 +17,14 @@ class Word {
   String spanish;
   int weight;
   double? mastery;
+  bool? flagged;
   bool? correct;
 
   factory Word.fromJson(Map<String, dynamic> json) => Word(
         english: json["english"],
         spanish: json["spanish"],
         weight: json["weight"],
+        flagged: json['flagged'],
         mastery: json['mastery']?.toDouble(),
       );
 
@@ -29,6 +32,7 @@ class Word {
         "english": english,
         "spanish": spanish,
         "weight": weight,
+        'flagged': flagged,
         'mastery': mastery,
       };
 }
