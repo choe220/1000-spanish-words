@@ -208,8 +208,9 @@ class _MatchingGameState extends State<MatchingGame> {
                     ElevatedButton(
                       onPressed: () async {
                         matches = [];
-                        await widget.user.generateSet().then((value) async =>
-                            await widget.user.saveToFirebase());
+                        await widget.user.generateSet(null).then(
+                            (value) async =>
+                                await widget.user.saveToFirebase());
                         for (var element in widget.user.currentSet!) {
                           english.add(element);
                           spanish.add(element);

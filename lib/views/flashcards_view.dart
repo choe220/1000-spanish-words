@@ -53,7 +53,7 @@ class _FlashcardsViewState extends State<FlashcardsView> {
               children: [
                 ElevatedButton(
                   onPressed: () async {
-                    widget.user.generateSet().then((_) => widget.user
+                    widget.user.generateSet(null).then((_) => widget.user
                         .saveToFirebase()
                         .then((_) => setState(() {})));
                   },

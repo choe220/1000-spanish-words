@@ -32,14 +32,19 @@ class User with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> generateSet() async {
+  Future<void> generateSet(List<Word>? set) async {
     var random = Random();
     if (currentSet != null) {
       for (Word word in currentSet!) {
         words.add(word);
       }
     }
-    currentSet = List.generate(10, (_) => words[random.nextInt(words.length)]);
+    if (set == null) {
+      currentSet =
+          List.generate(10, (_) => words[random.nextInt(words.length)]);
+    } else {
+      currentSet = List.generate(10, (_) => set[random.nextInt(words.length)]);
+    }
     for (Word word in currentSet!) {
       words.remove(word);
     }

@@ -65,7 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
       return User.fromFirebase(user.data()!);
     } else {
       User user = await createUser();
-      user.generateSet().then((value) async => await user.saveToFirebase());
+      user.generateSet(null).then((value) async => await user.saveToFirebase());
       return user;
     }
   }
