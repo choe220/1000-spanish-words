@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:spanish_words/models/user.dart';
 import 'package:spanish_words/models/words.dart';
 import 'package:spanish_words/widgets/match_card.dart';
+import 'package:spanish_words/widgets/white_text.dart';
 
 class MatchingGame extends StatefulWidget {
   const MatchingGame({
@@ -179,10 +180,9 @@ class _MatchingGameState extends State<MatchingGame> {
                         return Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Text(
+                            const WhiteText(
                               'You\'ve Matched Them All!',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 32),
+                              fontSize: 32,
                             ),
                             ElevatedButton(
                               onPressed: () => setState(() {
@@ -201,9 +201,9 @@ class _MatchingGameState extends State<MatchingGame> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text(
+                    const WhiteText(
                       'You\'ve Mastered This Set!',
-                      style: TextStyle(color: Colors.white, fontSize: 32),
+                      fontSize: 32,
                     ),
                     ElevatedButton(
                       onPressed: () async {

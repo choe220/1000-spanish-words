@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:spanish_words/models/words.dart';
+import 'package:spanish_words/widgets/white_text.dart';
 
 class FlashCard extends StatefulWidget {
   const FlashCard({
@@ -43,14 +44,11 @@ class _FlashCardState extends State<FlashCard> {
                 Center(
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
-                    child: Text(
+                    child: WhiteText(
                       !widget.showAnswer
                           ? widget.word.english
                           : widget.word.spanish,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 100,
-                      ),
+                      fontSize: 100,
                     ),
                   ),
                 ),

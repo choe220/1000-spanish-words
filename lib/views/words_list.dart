@@ -187,12 +187,9 @@ class _WordsListState extends State<WordsList> {
                         ),
                       ),
                     )
-                  : const Text(
+                  : const WhiteText(
                       'No Results Found',
-                      style: TextStyle(
-                        fontSize: 24,
-                        color: Colors.white,
-                      ),
+                      fontSize: 24,
                     ),
             ),
           ],

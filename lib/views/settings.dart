@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:spanish_words/models/user.dart';
 import 'package:spanish_words/models/words.dart';
+import 'package:spanish_words/widgets/white_text.dart';
 
 class Settings extends StatefulWidget {
   const Settings({
@@ -61,12 +62,9 @@ class _SettingsState extends State<Settings> {
                 const SizedBox(
                   height: 30,
                 ),
-                const Text(
+                const WhiteText(
                   'Increase Speech Attempts',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                  ),
+                  fontSize: 24,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -95,12 +93,9 @@ class _SettingsState extends State<Settings> {
                     const SizedBox(
                       width: 10,
                     ),
-                    Text(
+                    WhiteText(
                       widget.user.attempts.toString(),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                      ),
+                      fontSize: 24,
                     ),
                     const SizedBox(
                       width: 10,

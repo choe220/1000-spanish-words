@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:spanish_words/models/user.dart';
 import 'package:spanish_words/widgets/flashcard.dart';
+import 'package:spanish_words/widgets/white_text.dart';
 
 class FlashcardsView extends StatefulWidget {
   final User user;
@@ -32,11 +33,8 @@ class _FlashcardsViewState extends State<FlashcardsView> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
+                WhiteText(
                   '${_index + 1} / 10',
-                  style: const TextStyle(
-                    color: Colors.white,
-                  ),
                 ),
               ],
             ),
