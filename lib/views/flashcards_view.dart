@@ -75,7 +75,7 @@ class _FlashcardsViewState extends State<FlashcardsView> {
                         onPressed: () {
                           showAnswer = false;
                           if (_index == 0) {
-                            setState(() => _index = 10);
+                            setState(() => _index = 9);
                           } else {
                             setState(() => _index -= 1);
                           }
