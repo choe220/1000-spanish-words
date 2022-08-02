@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:spanish_words/models/user.dart';
 import 'package:spanish_words/models/words.dart';
-import 'package:spanish_words/widgets/white_text.dart';
 
 class Settings extends StatefulWidget {
   const Settings({
