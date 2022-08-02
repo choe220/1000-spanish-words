@@ -20,10 +20,10 @@ class MatchCard extends StatefulWidget {
   final Function onTapCallback;
 
   @override
-  State<MatchCard> createState() => _MatchCardState();
+  State<MatchCard> createState() => MatchCardState();
 }
 
-class _MatchCardState extends State<MatchCard> {
+class MatchCardState extends State<MatchCard> {
   FlutterTts flutterTts = FlutterTts();
 
   Future _speak(String string) async {
