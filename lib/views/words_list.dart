@@ -18,6 +18,7 @@ class _WordsListState extends State<WordsList> {
   bool _filters = false;
   RangeValues _currentRangeValues = const RangeValues(0, 100);
   bool _onlyFlagged = false;
+  bool _currentSet = false;
 
   @override
   void initState() {
@@ -31,7 +32,9 @@ class _WordsListState extends State<WordsList> {
         ? (widget.user.words + widget.user.currentSet!)
             .where((word) => word.flagged != null && word.flagged!)
             .toList()
-        : (widget.user.words + widget.user.currentSet!);
+        : _currentSet
+            ? widget.user.currentSet!
+            : (widget.user.words + widget.user.currentSet!);
     if (enteredKeyword != null && enteredKeyword.isNotEmpty) {
       results = wordPool
           .where((word) =>
@@ -141,6 +144,26 @@ class _WordsListState extends State<WordsList> {
                       ),
                     ],
                   ),
+                  Row(
+                    children: [
+                      Checkbox(
+                        fillColor: MaterialStateProperty.all(Colors.white),
+                        checkColor: Colors.black,
+                        value: _currentSet,
+                        onChanged: (value) => {
+                          setState(() => _currentSet = value!),
+                          _filter(null),
+                        },
+                      ),
+                      InkWell(
+                        onTap: () => {
+                          setState(() => _currentSet = !_currentSet),
+                          _filter(null),
+                        },
+                        child: const WhiteText('Show Current Set'),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             Expanded(
@@ -159,6 +182,10 @@ class _WordsListState extends State<WordsList> {
                               Text(_foundWords[index].spanish),
                               Text(
                                   '${(_foundWords[index].mastery ?? 0) * 100} % mastery'),
+                              LinearProgressIndicator(
+                                value: _foundWords[index].mastery,
+                                semanticsLabel: 'Linear progress indicator',
+                              ),
                             ],
                           ),
                           trailing: Row(
