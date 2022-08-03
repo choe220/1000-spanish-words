@@ -8,12 +8,10 @@ class FlashCard extends StatefulWidget {
     Key? key,
     required this.word,
     required this.showAnswer,
-    required this.showAnswerCallback,
   }) : super(key: key);
 
   final Word word;
   final bool showAnswer;
-  final Function showAnswerCallback;
 
   @override
   State<FlashCard> createState() => _FlashCardState();
@@ -21,6 +19,12 @@ class FlashCard extends StatefulWidget {
 
 class _FlashCardState extends State<FlashCard> {
   FlutterTts flutterTts = FlutterTts();
+  bool? _override;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   Future _speak(String string) async {
     await flutterTts.setLanguage("es-MX");
@@ -31,7 +35,12 @@ class _FlashCardState extends State<FlashCard> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => widget.showAnswerCallback(),
+      onTap: () => setState(() => {
+            if (_override == null)
+              _override = !widget.showAnswer
+            else
+              _override = !_override!
+          }),
       child: SizedBox(
         width: MediaQuery.of(context).size.width * 0.9,
         height: MediaQuery.of(context).size.width * 0.4,
@@ -45,9 +54,13 @@ class _FlashCardState extends State<FlashCard> {
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
                     child: WhiteText(
-                      !widget.showAnswer
-                          ? widget.word.english
-                          : widget.word.spanish,
+                      _override != null
+                          ? _override!
+                              ? widget.word.spanish
+                              : widget.word.english
+                          : !widget.showAnswer
+                              ? widget.word.english
+                              : widget.word.spanish,
                       fontSize: 100,
                     ),
                   ),
