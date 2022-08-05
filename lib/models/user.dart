@@ -87,26 +87,4 @@ class User with ChangeNotifier {
       words.remove(word);
     }
   }
-
-  Future<void> incrementMasteryForSet() async {
-    for (var word in currentSet!) {
-      Word userWord =
-          currentSet!.firstWhere((element) => element.english == word.english);
-      if (userWord.mastery != null && userWord.mastery! < 1) {
-        userWord.mastery = userWord.mastery! + 0.05;
-      } else {
-        userWord.mastery = 0.05;
-      }
-    }
-  }
-
-  Future<void> incrementMastery(Word word) async {
-    Word userWord =
-        currentSet!.firstWhere((element) => element.english == word.english);
-    if (userWord.mastery != null && userWord.mastery! < 1) {
-      userWord.mastery = userWord.mastery! + 0.05;
-    } else {
-      userWord.mastery = 0.05;
-    }
-  }
 }
