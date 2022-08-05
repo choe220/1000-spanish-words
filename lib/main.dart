@@ -28,6 +28,15 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  // final String response =
+  //     await rootBundle.loadString('assets/words_updated.json');
+  // List<Word> newWords = wordsFromJson(response);
+  // FirebaseFirestore db = FirebaseFirestore.instance;
+  // CollectionReference wordsCollection = db.collection('words');
+  // for (Word word in newWords) {
+  //   await wordsCollection.add(word.toJson());
+  // }
+
   runApp(const MyApp());
 }
 

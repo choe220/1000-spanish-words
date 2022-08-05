@@ -167,27 +167,30 @@ class _SpeechGameState extends State<SpeechGame> {
                   ),
                 ),
               ),
-              if ((_attempts / widget.user.attempts) >= 0.8) Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      ElevatedButton(
-                        onPressed: () async {
-                          _lastWords = 'Correct Answer: ${_currentWord.spanish}';
-                          await Future.delayed(const Duration(seconds: 2));
-                          _lastWords = '';
-                          _currentWord = _generateWord();
-                          _correct = null;
-                          _attempts = 0;
-                          setState(() {});
-                        },
-                        child: const Text('Skip?'),
+              if ((_attempts / widget.user.attempts) >= 0.8)
+                Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            _lastWords =
+                                'Correct Answer: ${_currentWord.spanish}';
+                            setState(() {});
+                            await Future.delayed(const Duration(seconds: 2));
+                            _lastWords = '';
+                            _currentWord = _generateWord();
+                            _correct = null;
+                            _attempts = 0;
+                            setState(() {});
+                          },
+                          child: const Text('Skip?'),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
               Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: Row(
