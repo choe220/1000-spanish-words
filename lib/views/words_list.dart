@@ -19,6 +19,7 @@ class _WordsListState extends State<WordsList> {
   RangeValues _currentRangeValues = const RangeValues(0, 100);
   bool _onlyFlagged = false;
   bool _currentSet = false;
+  String _dropdownValue = 'All';
 
   @override
   void initState() {
@@ -35,6 +36,11 @@ class _WordsListState extends State<WordsList> {
         : _currentSet
             ? widget.user.currentSet!
             : (widget.user.words + widget.user.currentSet!);
+    if (_dropdownValue != 'All') {
+      wordPool = wordPool
+          .where((e) => e.partOfSpeech == _dropdownValue.toLowerCase())
+          .toList();
+    }
     if (enteredKeyword != null && enteredKeyword.isNotEmpty) {
       results = wordPool
           .where((word) =>
@@ -164,6 +170,38 @@ class _WordsListState extends State<WordsList> {
                       ),
                     ],
                   ),
+                  DropdownButton<String>(
+                    value: _dropdownValue,
+                    style: const TextStyle(color: Colors.white),
+                    elevation: 16,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _dropdownValue = newValue!;
+                        _filter(null);
+                      });
+                    },
+                    items: <String>[
+                      'All',
+                      'Pronoun',
+                      'Noun',
+                      'Adjective',
+                      'Verb',
+                      'Adverb',
+                      'Preposition',
+                      'Conjunction',
+                      'Interjection'
+                    ].map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(
+                          value,
+                          style: const TextStyle(
+                            color: Colors.black,
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
                 ],
               ),
             Expanded(
@@ -182,10 +220,12 @@ class _WordsListState extends State<WordsList> {
                               Text(_foundWords[index].spanish),
                               Text(
                                   '${(_foundWords[index].mastery ?? 0) * 100} % mastery'),
-                              LinearProgressIndicator(
-                                value: _foundWords[index].mastery,
-                                semanticsLabel: 'Linear progress indicator',
-                              ),
+                              if (_foundWords[index].mastery != null &&
+                                  _foundWords[index].mastery! >= 0.01)
+                                LinearProgressIndicator(
+                                  value: _foundWords[index].mastery,
+                                  semanticsLabel: 'Linear progress indicator',
+                                ),
                             ],
                           ),
                           trailing: Row(

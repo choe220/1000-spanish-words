@@ -8,7 +8,7 @@ class User with ChangeNotifier {
   List<Word> words;
   List<Word>? currentSet;
   int attempts;
-  List speechSensitivity;
+  List<dynamic> speechSensitivity;
 
   User({
     required this.words,

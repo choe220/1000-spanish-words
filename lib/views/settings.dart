@@ -22,7 +22,8 @@ class _SettingsState extends State<Settings> {
   void initState() {
     super.initState();
     _currentRangeValues = RangeValues(
-        widget.user.speechSensitivity[0], widget.user.speechSensitivity[1]);
+        widget.user.speechSensitivity[0].toDouble(),
+        widget.user.speechSensitivity[1].toDouble());
   }
 
   @override
