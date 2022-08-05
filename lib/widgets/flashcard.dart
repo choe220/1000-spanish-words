@@ -65,7 +65,7 @@ class _FlashCardState extends State<FlashCard> {
                     ),
                   ),
                 ),
-                if (widget.showAnswer)
+                if (widget.showAnswer || (_override != null && _override!))
                   Positioned(
                     right: 0,
                     bottom: 0,
