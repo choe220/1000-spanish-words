@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/widgets.dart';
 import 'package:spanish_words/models/words.dart';
+import 'package:spanish_words/util.dart';
 
 class User with ChangeNotifier {
   List<Word> words;
@@ -10,6 +11,7 @@ class User with ChangeNotifier {
   int attempts;
   List<dynamic> speechSensitivity;
   double numMatchCards;
+  Map<String, bool> partsOfSpeech;
 
   User({
     required this.words,
@@ -17,6 +19,16 @@ class User with ChangeNotifier {
     this.attempts = 3,
     this.speechSensitivity = const [75, 80],
     this.numMatchCards = 5,
+    this.partsOfSpeech = const {
+      'Pronoun': true,
+      'Noun': true,
+      'Adjective': true,
+      'Verb': true,
+      'Adverb': true,
+      'Preposition': true,
+      'Conjunction': true,
+      'Interjection': true,
+    },
   });
 
   User.fromFirebase(Map<String, dynamic> data)
@@ -25,8 +37,20 @@ class User with ChangeNotifier {
             ? List<Word>.from(data['current_set'].map((e) => Word.fromJson(e)))
             : null,
         attempts = data['attempts'] ?? 3,
-        speechSensitivity = data['speechSensitivity'] ?? const [75, 80],
-        numMatchCards = data['num_match_cards'] ?? 5;
+        speechSensitivity = data['speechSensitivity'] ?? [75, 80],
+        numMatchCards = data['num_match_cards'] ?? 5,
+        partsOfSpeech = data['parts_of_speech'] != null
+            ? Map<String, bool>.from(data['parts_of_speech'])
+            : {
+                'Pronoun': true,
+                'Noun': true,
+                'Adjective': true,
+                'Verb': true,
+                'Adverb': true,
+                'Preposition': true,
+                'Conjunction': true,
+                'Interjection': true,
+              };
 
   Map<String, dynamic> toFirebase() {
     return {
@@ -35,6 +59,7 @@ class User with ChangeNotifier {
       'attempts': attempts,
       'speechSensitivity': speechSensitivity,
       'num_match_cards': numMatchCards,
+      'parts_of_speech': partsOfSpeech,
     };
   }
 
@@ -45,18 +70,19 @@ class User with ChangeNotifier {
   }
 
   Future<void> generateSet(List<Word>? set) async {
-    var random = Random();
     if (currentSet != null) {
       for (Word word in currentSet!) {
         words.add(word);
       }
     }
-    if (set == null) {
-      currentSet =
-          List.generate(10, (_) => words[random.nextInt(words.length)]);
-    } else {
-      currentSet = List.generate(10, (_) => set[random.nextInt(words.length)]);
+    List<Word> filteredWords = [];
+    for (Word word in words) {
+      if (partsOfSpeech[word.partOfSpeech.capitalize()] == true) {
+        filteredWords.add(word);
+      }
     }
+    filteredWords.shuffle();
+    currentSet = filteredWords.sublist(0, 10);
     for (Word word in currentSet!) {
       words.remove(word);
     }
