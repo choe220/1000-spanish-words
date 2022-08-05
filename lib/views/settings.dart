@@ -16,14 +16,16 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
-  late RangeValues _currentRangeValues;
+  late RangeValues _currentSpeechSensitivityValues;
+  late double _currentNumMatchCards = 5;
 
   @override
   void initState() {
     super.initState();
-    _currentRangeValues = RangeValues(
+    _currentSpeechSensitivityValues = RangeValues(
         widget.user.speechSensitivity[0].toDouble(),
         widget.user.speechSensitivity[1].toDouble());
+    _currentNumMatchCards = widget.user.numMatchCards;
   }
 
   @override
@@ -138,22 +140,42 @@ class _SettingsState extends State<Settings> {
                   'Speech Sensitivity',
                 ),
                 RangeSlider(
-                  values: _currentRangeValues,
+                  values: _currentSpeechSensitivityValues,
                   max: 100,
                   divisions: 50,
                   labels: RangeLabels(
-                    '${_currentRangeValues.start.round()} %',
-                    '${_currentRangeValues.end.round()} %',
+                    '${_currentSpeechSensitivityValues.start.round()} %',
+                    '${_currentSpeechSensitivityValues.end.round()} %',
                   ),
                   onChanged: (values) =>
-                      setState(() => _currentRangeValues = values),
+                      setState(() => _currentSpeechSensitivityValues = values),
                   onChangeEnd: (value) async => {
                     widget.user.speechSensitivity = [
-                      _currentRangeValues.start,
-                      _currentRangeValues.end
+                      _currentSpeechSensitivityValues.start,
+                      _currentSpeechSensitivityValues.end
                     ],
                     await widget.user.saveToFirebase(),
                   },
+                ),
+                const SizedBox(
+                  height: 30,
+                ),
+                const WhiteText(
+                  'Change Number of Match Cards',
+                  fontSize: 24,
+                ),
+                Slider(
+                  value: _currentNumMatchCards,
+                  min: 5,
+                  max: 10,
+                  divisions: 5,
+                  label: _currentNumMatchCards.round().toString(),
+                  onChangeEnd: (value) async => {
+                    widget.user.numMatchCards = value,
+                    await widget.user.saveToFirebase(),
+                  },
+                  onChanged: (value) =>
+                      setState(() => _currentNumMatchCards = value),
                 ),
               ],
             ),

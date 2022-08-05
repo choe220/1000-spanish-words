@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:spanish_words/models/user.dart';
 import 'package:spanish_words/models/words.dart';
@@ -27,15 +29,25 @@ class _MatchingGameState extends State<MatchingGame> {
 
   List<Word> matches = [];
 
+  Random random = Random();
+
   @override
   void initState() {
     super.initState();
+    generateSet();
+  }
 
+  void generateSet() {
+    english.clear();
+    spanish.clear();
     for (var element in widget.user.currentSet!) {
       english.add(element);
-      spanish.add(element);
     }
     english.shuffle();
+    english = english.sublist(0, widget.user.numMatchCards.round());
+    for (var element in english) {
+      spanish.add(element);
+    }
     spanish.shuffle();
   }
 
@@ -103,67 +115,70 @@ class _MatchingGameState extends State<MatchingGame> {
     return SafeArea(
       child: Scaffold(
         body: _checkMasteryCompletion() <= 0.99
-            ? matches.length != 10
-                ? SingleChildScrollView(
-                    child: Stack(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            // English
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  ...english.map((e) {
-                                    return MatchCard(
-                                      e,
-                                      english: true,
-                                      selected:
-                                          e == englishSelected ? true : false,
-                                      correct: matches.contains(e),
-                                      mute: _mute,
-                                      onTapCallback: updateSelected,
-                                    );
-                                  })
-                                ],
-                              ),
-                            ),
-
-                            // Spanish
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  ...spanish.map((e) => MatchCard(
-                                        e,
-                                        english: false,
-                                        selected:
-                                            e == spanishSelected ? true : false,
-                                        correct: matches.contains(e),
-                                        mute: _mute,
-                                        onTapCallback: updateSelected,
-                                      )),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        Positioned(
-                          bottom: 10,
-                          right: 10,
-                          child: IconButton(
-                            onPressed: () => setState(() => _mute = !_mute),
-                            icon: Icon(
-                              _mute ? Icons.volume_mute : Icons.volume_up,
-                              color: Colors.white,
+            ? matches.length != widget.user.numMatchCards
+                ? Stack(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // English
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                ...english.map((e) {
+                                  return MatchCard(
+                                    e,
+                                    english: true,
+                                    selected:
+                                        e == englishSelected ? true : false,
+                                    correct: matches.contains(e),
+                                    mute: _mute,
+                                    numCards: widget.user.numMatchCards.round(),
+                                    onTapCallback: updateSelected,
+                                  );
+                                })
+                              ],
                             ),
                           ),
+
+                          // Spanish
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                ...spanish.map((e) => MatchCard(
+                                      e,
+                                      english: false,
+                                      selected:
+                                          e == spanishSelected ? true : false,
+                                      correct: matches.contains(e),
+                                      mute: _mute,
+                                      numCards:
+                                          widget.user.numMatchCards.round(),
+                                      onTapCallback: updateSelected,
+                                    )),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      Positioned(
+                        bottom: 10,
+                        right: 10,
+                        child: IconButton(
+                          onPressed: () => setState(() => _mute = !_mute),
+                          icon: Icon(
+                            _mute ? Icons.volume_mute : Icons.volume_up,
+                            color: Colors.white,
+                          ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   )
                 : Center(
                     child: FutureBuilder(
@@ -187,8 +202,7 @@ class _MatchingGameState extends State<MatchingGame> {
                             ElevatedButton(
                               onPressed: () => setState(() {
                                 matches = [];
-                                english.shuffle();
-                                spanish.shuffle();
+                                generateSet();
                               }),
                               child: const Text('Start Over'),
                             ),
@@ -211,12 +225,7 @@ class _MatchingGameState extends State<MatchingGame> {
                         await widget.user.generateSet(null).then(
                             (value) async =>
                                 await widget.user.saveToFirebase());
-                        for (var element in widget.user.currentSet!) {
-                          english.add(element);
-                          spanish.add(element);
-                        }
-                        english.shuffle();
-                        spanish.shuffle();
+                        generateSet();
                         setState(() {});
                       },
                       child: const Text('Next Set'),
