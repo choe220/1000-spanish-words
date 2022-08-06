@@ -87,7 +87,7 @@ class _FlashcardsViewState extends State<FlashcardsView>
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         WhiteText(
-                          '${_index + 1} / 10',
+                          '${_index % _flashCards.length + 1} / 10',
                         ),
                       ],
                     ),
@@ -95,13 +95,13 @@ class _FlashcardsViewState extends State<FlashcardsView>
                       height: 200.0,
                       child: PageView.builder(
                         controller: PageController(viewportFraction: 0.8),
-                        itemCount: _flashCards.length,
+                        // itemCount: _flashCards.length,
                         onPageChanged: (int index) =>
                             setState(() => _index = index),
                         itemBuilder: (context, index) {
                           return Transform.scale(
                             scale: index == _index ? 1 : 0.9,
-                            child: _flashCards[index],
+                            child: _flashCards[index % _flashCards.length],
                           );
                         },
                       ),
